@@ -4,11 +4,12 @@
 
 Install cmake to build the project.
 
-``` 
-brew install cmake 
+```
+brew install cmake
 ```
 
 To build, run:
+
 ```
 mkdir build
 cd build
@@ -16,12 +17,23 @@ cmake ..
 cmake --build .
 ```
 
-Run in the terminal
+To run server, in the build directory run
+
 ```
-./server-from-scratch
+cd src/server
+./server
+
 ```
 
-Run in a different terminal 
+To run client, in the build directory run
+
+```
+cd src/client
+./client
+
+```
+
+To test echo server, run in a different terminal
 
 ```
 telnet localhost 54000
