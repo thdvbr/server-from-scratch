@@ -8,6 +8,14 @@ Install cmake to build the project.
 brew install cmake
 ```
 
+Install googletest in the root.
+
+```
+git clone https://github.com/google/googletest/
+```
+
+## Run
+
 To build, run:
 
 ```
@@ -22,7 +30,6 @@ To run server, in the build directory run
 ```
 cd src/server
 ./server
-
 ```
 
 To run client, in the build directory run
@@ -30,7 +37,6 @@ To run client, in the build directory run
 ```
 cd src/client
 ./client
-
 ```
 
 To test echo server, run in a different terminal
