@@ -73,7 +73,6 @@ int TcpListener::CreateSocket()
     hint.sin_family = AF_INET;
     hint.sin_port = htons(m_port);                 // htons = host to network short - converts short int (e,g. port) to network representation
     inet_pton(AF_INET, "0.0.0.0", &hint.sin_addr); // (version for the internet, any address, buffer)
-    // hint.sin_addr.s_addr = htonl(INADDR_ANY);
 
     if (bind(serverSocket, (struct sockaddr *)&hint, sizeof(hint)) < 0)
     {
