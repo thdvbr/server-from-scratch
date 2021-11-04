@@ -1,5 +1,12 @@
 #include "tcpListener.h"
 
+#include <sys/socket.h>
+#include <sys/types.h>
+#include <unistd.h>
+#include <netdb.h>
+#include <arpa/inet.h>
+#include <string.h>
+
 // constructor
 TcpListener::TcpListener(std::string ipAddress, int port, MessageReceivedHandler handler)
     : m_ipAddress(ipAddress), m_port(port), MessageReceived(handler){};
@@ -14,20 +21,23 @@ void TcpListener::Run()
 {
     // while loop: accept and echo message back to client
     char buf[MAX_BUFFER_SIZE];
+
+    // Create a listening socket
+    int listeningSocket = CreateSocket();
+    if (listeningSocket < 0)
+    {
+        // throw std::runtime_error("cant create listener socket");
+        return; 
+    }
+
     while (true)
     {
-        // Create a listening socket
-        int listeningSocket = CreateSocket();
-        if (listeningSocket < 0)
-        {
-            break;
-        }
         // wait for client to send data
         int clientSocket = WaitForConnection(listeningSocket);
+
+        // create a new thread that executes the client connection handling code.
         if (clientSocket != -1)
         {
-            // close listening socket when connection is succesful
-            close(listeningSocket);
             int bytesReceived = 0;
             do
             {
@@ -57,6 +67,8 @@ void TcpListener::Run()
             close(clientSocket);
         }
     }
+
+    close(listeningSocket);
 }
 
 int TcpListener::CreateSocket()
@@ -118,3 +130,21 @@ int TcpListener::WaitForConnection(int m_socket)
     }
     return clientSocket;
 }
+
+// //---------------------------------------------------------------------------------
+// //Example code for function pointers, you do not need the code for anything
+// void func(int a) {
+//     // ...
+// }
+
+// using fun_type = void (int);
+// using fun_ptr_type = void (*)(int);
+
+// void test() {
+//     int a= 1;
+
+//     int* ap = &a;
+//     fun_type* fp = &func;
+//     fun_ptr_type fp2 = &func; 
+// }
+// //---------------------------------------------------------------------------------

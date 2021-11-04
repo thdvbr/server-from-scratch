@@ -1,12 +1,6 @@
 #pragma once
 
 #include <iostream>
-#include <sys/socket.h>
-#include <sys/types.h>
-#include <unistd.h>
-#include <netdb.h>
-#include <arpa/inet.h>
-#include <string.h>
 #include <string>
 
 #define MAX_BUFFER_SIZE (4096)

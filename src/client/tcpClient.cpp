@@ -1,5 +1,12 @@
 #include "tcpClient.h"
 
+#include <sys/socket.h>
+#include <sys/types.h>
+#include <unistd.h>
+#include <netdb.h>
+#include <arpa/inet.h>
+#include <string.h>
+
 TcpClient::TcpClient(std::string ipAddress, int port) : m_ipAddress(ipAddress), m_port(port) {}
 
 void TcpClient::Run()
@@ -14,6 +21,9 @@ void TcpClient::Run()
         }
         if (clientSocket != -1)
         {
+            // all the user input handling does not belong into a socket class. 
+            // you should refactor it so that that part goes into main, while 
+            //all the socket abstctions (sending /receiving) remain here
             std::string userInput;
             do
             {
