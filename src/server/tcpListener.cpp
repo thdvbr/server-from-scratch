@@ -11,10 +11,10 @@
 TcpListener::TcpListener(std::string ipAddress, int port, MessageReceivedHandler handler)
     : m_ipAddress(ipAddress), m_port(port), MessageReceived(handler){};
 
-void TcpListener::Send(int clientSocket, std::string msg)
+void TcpListener::Send(int clientSocket, std::string msg, int length)
 {
     // send(clientSocket,buffer,size,flag)
-    send(clientSocket, msg.c_str(), msg.size() + 1, 0);
+    send(clientSocket, msg.c_str(), length, 0);
 }
 
 void TcpListener::Run()
@@ -27,7 +27,7 @@ void TcpListener::Run()
     if (listeningSocket < 0)
     {
         // throw std::runtime_error("cant create listener socket");
-        return; 
+        return;
     }
 
     while (true)
@@ -58,9 +58,11 @@ void TcpListener::Run()
                 //if bytesReceived > 0
                 // Echo message back to client
                 if (MessageReceived != NULL)
+                // else
                 {
                     std::cout << "Received: " << std::string(buf, 0, bytesReceived) << std::endl;
-                    MessageReceived(this, clientSocket, std::string(buf, 0, bytesReceived));
+                    // MessageReceived(this, clientSocket, std::string(buf, 0, bytesReceived), bytesReceived);
+                    OnMessageReceived(clientSocket, buf, bytesReceived);
                 }
             } while (bytesReceived > 0);
             // if the client disconnects, closes client socket and go to the top, create new socket
@@ -131,6 +133,10 @@ int TcpListener::WaitForConnection(int m_socket)
     return clientSocket;
 }
 
+void TcpListener::OnMessageReceived(int clientSocket, std::string msg, int length)
+{
+}
+
 // //---------------------------------------------------------------------------------
 // //Example code for function pointers, you do not need the code for anything
 // void func(int a) {
@@ -145,6 +151,6 @@ int TcpListener::WaitForConnection(int m_socket)
 
 //     int* ap = &a;
 //     fun_type* fp = &func;
-//     fun_ptr_type fp2 = &func; 
+//     fun_ptr_type fp2 = &func;
 // }
 // //---------------------------------------------------------------------------------
