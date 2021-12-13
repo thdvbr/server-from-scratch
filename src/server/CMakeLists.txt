@@ -1,1 +1,1 @@
-add_executable(server main.cpp tcpListener.cpp)
+add_executable(server main.cpp tcpListener.cpp webServer.cpp)
