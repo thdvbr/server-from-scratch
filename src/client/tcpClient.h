@@ -8,11 +8,11 @@
 class TcpClient
 {
 public:
-    TcpClient(std::string ipAddress, int port);
+    TcpClient(const char *ipAddress, int port);
     void Run();
 
 private:
     int CreateClientSocket();
     int m_port;
-    std::string m_ipAddress;
+    const char *m_ipAddress;
 };

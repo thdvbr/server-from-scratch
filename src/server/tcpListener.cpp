@@ -8,13 +8,77 @@
 #include <string.h>
 
 // constructor
-TcpListener::TcpListener(std::string ipAddress, int port)
+TcpListener::TcpListener(const char *ipAddress, int port)
     : m_ipAddress(ipAddress), m_port(port){};
 
+int TcpListener::CreateSocket()
+{
+    // Create a socket
+    int serverSocket = socket(AF_INET, SOCK_STREAM, 0); // socket(domain, type, protocol)
+    if (serverSocket < 0)
+    {
+        std::cerr << "Can't create a socket!";
+        return -1;
+    }
+    // Bind an ip address and port to the socket
+    struct sockaddr_in hint;
+    hint.sin_family = AF_INET;
+    hint.sin_port = htons(m_port);                   // htons = host to network short - converts short int (e,g. port) to network representation
+    inet_pton(AF_INET, m_ipAddress, &hint.sin_addr); // (version for the internet, any address, buffer)
+
+    if (bind(serverSocket, (struct sockaddr *)&hint, sizeof(hint)) < 0)
+    {
+        std::cerr << "Can't bind to IP/port";
+        return -1;
+    }
+    // Mark the socket for listening in
+    if (listen(serverSocket, SOMAXCONN) < 0)
+    {
+        std::cerr << "Can't listen!";
+        return -1;
+    }
+    return serverSocket;
+}
+
+int TcpListener::WaitForConnection(int m_socket)
+{
+    // Accept a call
+    char host[NI_MAXHOST];
+    char svc[NI_MAXSERV];
+    sockaddr_in client;
+    socklen_t clientSize = sizeof(client);
+
+    int clientSocket = accept(m_socket, (sockaddr *)&client, &clientSize);
+
+    if (clientSocket < 0)
+    {
+        std::cerr << "Problem with client connecting!";
+        return -1;
+    }
+    memset(host, 0, NI_MAXHOST);
+    memset(svc, 0, NI_MAXSERV);
+    // converts socket addr to host and service
+    int result = getnameinfo((sockaddr *)&client, sizeof(client), host, NI_MAXHOST, svc, NI_MAXSERV, 0);
+    if (result)
+    {
+        std::cout << host << " connected on " << svc << std::endl;
+    }
+    else
+    {
+        inet_ntop(AF_INET, &client.sin_addr, host, NI_MAXHOST);
+        std::cout << host << " connected on " << ntohs(client.sin_port) << std::endl;
+    }
+    return clientSocket;
+}
 void TcpListener::Send(int clientSocket, std::string msg, int length)
 {
     // send(clientSocket,buffer,size,flag)
     send(clientSocket, msg.c_str(), length, 0);
+}
+
+void TcpListener::OnMessageReceived(int clientSocket, std::string msg, int length)
+{
+    Send(clientSocket, msg, length);
 }
 
 void TcpListener::Run()
@@ -72,71 +136,6 @@ void TcpListener::Run()
     }
 
     close(listeningSocket);
-}
-
-int TcpListener::CreateSocket()
-{
-    // Create a socket
-    int serverSocket = socket(AF_INET, SOCK_STREAM, 0); // socket(domain, type, protocol)
-    if (serverSocket < 0)
-    {
-        std::cerr << "Can't create a socket!";
-        return -1;
-    }
-    // Bind an ip address and port to the socket
-    struct sockaddr_in hint;
-    hint.sin_family = AF_INET;
-    hint.sin_port = htons(m_port);                 // htons = host to network short - converts short int (e,g. port) to network representation
-    inet_pton(AF_INET, "0.0.0.0", &hint.sin_addr); // (version for the internet, any address, buffer)
-
-    if (bind(serverSocket, (struct sockaddr *)&hint, sizeof(hint)) < 0)
-    {
-        std::cerr << "Can't bind to IP/port";
-        return -1;
-    }
-    // Mark the socket for listening in
-    if (listen(serverSocket, SOMAXCONN) < 0)
-    {
-        std::cerr << "Can't listen!";
-        return -1;
-    }
-    return serverSocket;
-}
-
-int TcpListener::WaitForConnection(int m_socket)
-{
-    // Accept a call
-    char host[NI_MAXHOST];
-    char svc[NI_MAXSERV];
-    sockaddr_in client;
-    socklen_t clientSize = sizeof(client);
-
-    int clientSocket = accept(m_socket, (sockaddr *)&client, &clientSize);
-
-    if (clientSocket < 0)
-    {
-        std::cerr << "Problem with client connecting!";
-        return -1;
-    }
-    memset(host, 0, NI_MAXHOST);
-    memset(svc, 0, NI_MAXSERV);
-    // converts socket addr to host and service
-    int result = getnameinfo((sockaddr *)&client, sizeof(client), host, NI_MAXHOST, svc, NI_MAXSERV, 0);
-    if (result)
-    {
-        std::cout << host << " connected on " << svc << std::endl;
-    }
-    else
-    {
-        inet_ntop(AF_INET, &client.sin_addr, host, NI_MAXHOST);
-        std::cout << host << " connected on " << ntohs(client.sin_port) << std::endl;
-    }
-    return clientSocket;
-}
-
-void TcpListener::OnMessageReceived(int clientSocket, std::string msg, int length)
-{
-    Send(clientSocket, msg, length);
 }
 
 // //---------------------------------------------------------------------------------

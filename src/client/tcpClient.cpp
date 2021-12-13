@@ -7,7 +7,7 @@
 #include <arpa/inet.h>
 #include <string.h>
 
-TcpClient::TcpClient(std::string ipAddress, int port) : m_ipAddress(ipAddress), m_port(port) {}
+TcpClient::TcpClient(const char *ipAddress, int port) : m_ipAddress(ipAddress), m_port(port) {}
 
 void TcpClient::Run()
 {
@@ -70,7 +70,7 @@ int TcpClient::CreateClientSocket()
     sockaddr_in hint;
     hint.sin_family = AF_INET;
     hint.sin_port = htons(m_port);
-    inet_pton(AF_INET, m_ipAddress.c_str(), &hint.sin_addr);
+    inet_pton(AF_INET, m_ipAddress, &hint.sin_addr);
     // Connect to the server on the socket
     int connectResult = connect(clientSocket, (sockaddr *)&hint, sizeof(hint));
     if (connectResult < 0)

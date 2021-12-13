@@ -14,7 +14,7 @@ class TcpListener
 {
 public:
     // constructor
-    TcpListener(std::string ipAddress, int port);
+    TcpListener(const char *ipAddress, int port);
 
     void Send(int clientSocket, std::string msg, int length);
 
@@ -28,7 +28,7 @@ private:
     int CreateSocket();
     int WaitForConnection(int m_socket);
 
-    std::string m_ipAddress; // IP Address server will run on
+    const char *m_ipAddress; // IP Address server will run on
     int m_port;              // Port # for the web service
 };
 
