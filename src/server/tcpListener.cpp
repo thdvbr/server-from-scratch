@@ -8,8 +8,8 @@
 #include <string.h>
 
 // constructor
-TcpListener::TcpListener(std::string ipAddress, int port, MessageReceivedHandler handler)
-    : m_ipAddress(ipAddress), m_port(port), MessageReceived(handler){};
+TcpListener::TcpListener(std::string ipAddress, int port)
+    : m_ipAddress(ipAddress), m_port(port){};
 
 void TcpListener::Send(int clientSocket, std::string msg, int length)
 {
@@ -57,12 +57,13 @@ void TcpListener::Run()
                 }
                 //if bytesReceived > 0
                 // Echo message back to client
-                if (MessageReceived != NULL)
+                if (bytesReceived > 0)
                 // else
                 {
+
                     std::cout << "Received: " << std::string(buf, 0, bytesReceived) << std::endl;
                     // MessageReceived(this, clientSocket, std::string(buf, 0, bytesReceived), bytesReceived);
-                    OnMessageReceived(clientSocket, buf, bytesReceived);
+                    OnMessageReceived(clientSocket, std::string(buf, 0, bytesReceived), bytesReceived);
                 }
             } while (bytesReceived > 0);
             // if the client disconnects, closes client socket and go to the top, create new socket
@@ -135,6 +136,7 @@ int TcpListener::WaitForConnection(int m_socket)
 
 void TcpListener::OnMessageReceived(int clientSocket, std::string msg, int length)
 {
+    Send(clientSocket, msg, length);
 }
 
 // //---------------------------------------------------------------------------------

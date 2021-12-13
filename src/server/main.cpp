@@ -1,13 +1,9 @@
+#include "webServer.h"
 #include "tcpListener.h"
-
-
-void Listener_MessageReceived(TcpListener *listener, int client, std::string msg)
-{
-    listener->Send(client, msg);
-}
 
 int main()
 {
-    TcpListener server("127.0.0.1", 54000, Listener_MessageReceived);
+    // TcpListener server("127.0.0.1", 54000);
+    WebServer server("0.0.0.0", 8080);
     server.Run();
 }

@@ -10,19 +10,11 @@
 
 constexpr std::size_t MAX_BUFFER_SIZE = 1024;
 
-//Forward declaration of class
-class TcpListener;
-
-// // Callback to data received
-//typedef void (*MessageReceivedHandler)(TcpListener *listener, int socketId, std::string msg);
-// I prefer the modern `using` syntax:
-using MessageReceivedHandler = void (*)(TcpListener *listener, int socketId, std::string msgRecieved, int length);
-
 class TcpListener
 {
 public:
     // constructor
-    TcpListener(std::string ipAddress, int port, MessageReceivedHandler handler);
+    TcpListener(std::string ipAddress, int port);
 
     void Send(int clientSocket, std::string msg, int length);
 
@@ -38,7 +30,6 @@ private:
 
     std::string m_ipAddress; // IP Address server will run on
     int m_port;              // Port # for the web service
-    MessageReceivedHandler MessageReceived;
 };
 
 // End of the header gurard
