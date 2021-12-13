@@ -21,8 +21,8 @@ void TcpClient::Run()
         }
         if (clientSocket != -1)
         {
-            // all the user input handling does not belong into a socket class. 
-            // you should refactor it so that that part goes into main, while 
+            // all the user input handling does not belong into a socket class.
+            // you should refactor it so that that part goes into main, while
             //all the socket abstctions (sending /receiving) remain here
             std::string userInput;
             do
@@ -64,13 +64,13 @@ int TcpClient::CreateClientSocket()
         return -1;
     }
     // Create a hint structure for the server we're connecting with
-    int port = 54000;
-    std::string ipAddress = "127.0.0.1";
+    // int port = 54000;
+    // std::string ipAddress = "127.0.0.1";
 
     sockaddr_in hint;
     hint.sin_family = AF_INET;
-    hint.sin_port = htons(port);
-    inet_pton(AF_INET, ipAddress.c_str(), &hint.sin_addr);
+    hint.sin_port = htons(m_port);
+    inet_pton(AF_INET, m_ipAddress.c_str(), &hint.sin_addr);
     // Connect to the server on the socket
     int connectResult = connect(clientSocket, (sockaddr *)&hint, sizeof(hint));
     if (connectResult < 0)
